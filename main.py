@@ -9,19 +9,15 @@ import os
 # Charger les variables d'environnement depuis le fichier .env
 load_dotenv()
 
-# Récupérer la clé API depuis l'environnement
-api_key = os.getenv("OPENAI_API_KEY")
+def format_response(result):
+    return f"{Fore.GREEN}{result}{Fore.RESET}"
 
-# Vérifier si la clé API est chargée correctement
-if not api_key:
-    raise ValueError("La clé API OpenAI n'est pas définie. Vérifiez votre fichier .env.")
 
-# Afficher la clé API pour déboguer
-print(f"Clé API chargée: {api_key[:5]}...")  # Affiche les 5 premiers caractères pour vérifier
+# Créer une chaîne de traitement
+prompt=ChatPromptTemplate.from_template("Tell me a short joke about {topic}")    
 
-# Initialiser le modèle avec la clé API
-model = ChatOpenAI(api_key=api_key, model="gpt-3.5-turbo")
+model= ChatOpenAI(model="gpt-3.5-turbo")
 
-# Exemple d'utilisation du modèle
-response = model.invoke("Tell me a short joke about horses")
-print(response)
+chain= prompt | model | format_response
+
+chain.invoke({"topic":"chicken"})
