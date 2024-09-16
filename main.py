@@ -53,7 +53,12 @@ def load_documents():
     """
     Load a file from path, split it into chunks, embed each chunk, and load it into the vector store.
     """
+    loader= TextLoader(".txt")
+    text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 
+    documents= loader.load()
+    chunks=text_splitter.split_documents(documents)
+    print(f"You have {len(documents)} documents and {len(chunks)}")
 
 
 # Placeholder function for loading embeddings
@@ -72,6 +77,8 @@ def generate_response(question, context):
 
 
 def query(query):
-    pass
+    load_documents()
+
+query("what is the capital of france")
     
 
