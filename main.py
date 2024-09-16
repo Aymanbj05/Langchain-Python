@@ -73,17 +73,29 @@ def load_embeddings(documents, user_query):
     
 
 
-def generate_response(question, context):
+def generate_response(retriever, context):
     """
     Generate a response based on the provided question and context using the language model.
     """
-    pass
+    chain= (
+        {context: retriever , "question": RunnablePassthrough()}
+        | chat_prompt_template
+        | model
+        | StrOutputParser()
+
+    )
+    return chain.invoke(query)
+    
 
 
 def query(query):
     documents= load_documents()
     retriever = load_embeddings(documents, query)
+    response= generate_response(retriever, query)
+    print(Fore.GREEN + response)
 
-query("what is the capital of france")
+query("Quelle sont les horaires d'ouverture?")
     
 
+
+  
