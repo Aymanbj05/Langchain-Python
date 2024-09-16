@@ -48,5 +48,27 @@ chat_prompt_template = ChatPromptTemplate.from_messages([
 model = ChatOpenAI(api_key=OPENAI_API_KEY)
 
 
+# Placeholder function for loading documents
+def load_documents():
+    """
+    Load a file from path, split it into chunks, embed each chunk, and load it into the vector store.
+    """
+
+
+
+# Placeholder function for loading embeddings
+def load_embeddings(document, user_query):
+    """
+    Create a vector store for the given document and user query.
+    """
+    pass
+
+
+def generate_response(question, context):
+    """
+    Generate a response based on the provided question and context using the language model.
+    """
+    pass
+
     
 
