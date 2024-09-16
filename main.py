@@ -59,14 +59,18 @@ def load_documents():
     documents= loader.load()
     chunks=text_splitter.split_documents(documents)
     print(f"You have {len(documents)} documents and {len(chunks)}")
-
+    return chunks
 
 # Placeholder function for loading embeddings
-def load_embeddings(document, user_query):
+def load_embeddings(documents, user_query):
     """
     Create a vector store for the given document and user query.
     """
-    pass
+    db= chroma.from_documents(documents, OpenAIEmbeddings)
+    docs= db.similarity_search(user_query)
+    print(docs)
+    return db.as_retrievar()
+    
 
 
 def generate_response(question, context):
@@ -77,7 +81,8 @@ def generate_response(question, context):
 
 
 def query(query):
-    load_documents()
+    documents= load_documents()
+    retriever = load_embeddings(documents, query)
 
 query("what is the capital of france")
     
