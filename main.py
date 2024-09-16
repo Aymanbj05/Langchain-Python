@@ -26,7 +26,7 @@ chain.invoke({"topic":"chicken"})
 def start():
     print("Welcome to the LangChain Chatbot!")
     print("Type 'exit' to quit the program.")
-    print(Fore.BLUE + "Bot: Hello! I am a chatbot. Ask me anything!" + fore.RESET)
+    print(Fore.BLUE + "Bot: Hello! I am a chatbot. Ask me anything!" + Fore.RESET)
 
     print("[1]-Raconter une blague")
     print("[2]-Quitter")
