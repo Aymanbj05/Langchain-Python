@@ -70,5 +70,8 @@ def generate_response(question, context):
     """
     pass
 
+
+def query(query):
+    pass
     
 
