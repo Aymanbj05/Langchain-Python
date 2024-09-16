@@ -95,6 +95,38 @@ def query(query):
     print(Fore.GREEN + response)
 
 query("Quelle sont les horaires d'ouverture?")
+
+
+def start():
+    print("Welcome to the LangChain Chatbot!")
+    print("Type 'exit' to quit the program.")
+    print(Fore.BLUE + "Bot: Hello! I am a chatbot. Ask me anything!" + Fore.RESET)
+
+    print("[1]-Raconter une blague")
+    print("[2]-Quitter")
+    choice= input("selectionner une option: ")
+    if choice == "1":
+        ask()
+    elif choice == "2":
+        exit()
+    else:
+        print("Invalid choice")
+        start()
+
+
+def ask():
+    """Poser une question à l'IA"""
+    while True:
+        user_input = input("Topic: ")
+
+        if user_input == "exit":
+            start()
+        else:
+            response = query(user_input)
+            print(response)
+
+if __name__ == "__main__":
+    start() 
     
 
 
