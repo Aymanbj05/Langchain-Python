@@ -23,6 +23,8 @@ from colorama import Fore
 
 # Charger les variables d'environnement depuis le fichier .env
 load_dotenv()
+def format_response(result):
+    return f"{Fore.GREEN}{result}{Fore.RESET}"
 
 OPENAI_API_KEY= os.getenv["OPENAI_API_KEY"]
 LANGUAGE_MODEL= "gpt-3.5-turbo"
@@ -39,7 +41,7 @@ human_message_prompt = HumanMessagePromptTemplate.from_template(
     template="Question: {question}"
 )
 
-# Create the chat prompt template from the message templates
+# combine le message system avec le message utilisateur en un seul prompt pour le fournir au modele
 chat_prompt_template = ChatPromptTemplate.from_messages([
     system_message_prompt, human_message_prompt
 ])
@@ -56,8 +58,10 @@ def load_documents():
     loader= TextLoader(".txt")
     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 
+    #charge le contenu du fichier texte.
     documents= loader.load()
     chunks=text_splitter.split_documents(documents)
+    #affiche le nombre de documents chargés et le nombre de morceaux obtenus après découpage.
     print(f"You have {len(documents)} documents and {len(chunks)}")
     return chunks
 
@@ -66,65 +70,13 @@ def load_embeddings(documents, user_query):
     """
     Create a vector store for the given document and user query.
     """
+
+    #Ces embeddings sont ensuite stockés dans une base de données vectorielle appelée chroma
     db= chroma.from_documents(documents, OpenAIEmbeddings)
+    #effectue une recherche des documents les plus similaires à la requête de l'utilisateur
     docs= db.similarity_search(user_query)
     print(docs)
     return db.as_retrievar()
-    from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.runnables import RunnablePassthrough
-from dotenv import load_dotenv
-from colorama import Fore
-import os
-
-# Charger les variables d'environnement depuis le fichier .env
-load_dotenv()
-
-def format_response(result):
-    return f"{Fore.GREEN}{result}{Fore.RESET}"
-
-
-# Créer une chaîne de traitement
-prompt=ChatPromptTemplate.from_template("Tell me a short joke about {topic}")    
-
-model= ChatOpenAI(model="gpt-3.5-turbo")
-
-chain= prompt | model | format_response
-
-chain.invoke({"topic":"chicken"})
-
-
-def start():
-    print("Welcome to the LangChain Chatbot!")
-    print("Type 'exit' to quit the program.")
-    print(Fore.BLUE + "Bot: Hello! I am a chatbot. Ask me anything!" + Fore.RESET)
-
-    print("[1]-Raconter une blague")
-    print("[2]-Quitter")
-    choice= input("selectionner une option: ")
-    if choice == "1":
-        ask()
-    elif choice == "2":
-        exit()
-    else:
-        print("Invalid choice")
-        start()
-
-
-def ask():
-    """Poser une question à l'IA"""
-    while True:
-        user_input = input("Topic: ")
-
-        if user_input == "exit":
-            start()
-        else:
-            response = chain.invoke({"topic": user_input})
-            print(response)
-
-if __name__ == "__main__":
-    start() 
 
 
 def generate_response(retriever, context):
@@ -132,7 +84,7 @@ def generate_response(retriever, context):
     Generate a response based on the provided question and context using the language model.
     """
     chain= (
-        {context: retriever , "question": RunnablePassthrough()}
+        {context: retriever , "question": RunnablePassthrough()} #on utilise cette methode pour dire que la question doit pas etre modifier dans la chaine de traitement
         | chat_prompt_template
         | model
         | StrOutputParser()
@@ -181,7 +133,23 @@ def ask():
 
 if __name__ == "__main__":
     start() 
-    
 
 
-  
+
+
+
+# Créer une chaîne de traitement
+# prompt=ChatPromptTemplate.from_template("Tell me a short joke about {topic}")    
+
+# model= ChatOpenAI(model="gpt-3.5-turbo")
+
+# chain= prompt | model | format_response
+
+# chain.invoke({"topic":"chicken"})
+
+
+
+
+
+
+
